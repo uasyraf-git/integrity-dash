@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Integrity Dash</title>
+    <meta
+      name="description"
+      content="Integrity Dash - a browser-based 3D endless runner. Run Fast. Choose Right."
+    />
+    <meta name="theme-color" content="#071a2e" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L28 7 V16 C28 23 22 28 16 30 C10 28 4 23 4 16 V7 Z' fill='%231261A0'/%3E%3Cpath d='M16 5 L25 9 V16 C25 21.5 21 25.5 16 27.2 C11 25.5 7 21.5 7 16 V9 Z' fill='%23071A2E'/%3E%3Cpath d='M16 10 L21 22 L16 19 L11 22 Z' fill='%23F2B632'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div id="canvas-container" aria-hidden="true"></div>
+
+      <div id="ui-root">
+        <section id="screen-menu" class="screen" data-screen="menu">
+          <div class="panel menu-panel">
+            <div class="brand-emblem" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="64" height="64">
+                <path d="M16 2 L28 7 V16 C28 23 22 28 16 30 C10 28 4 23 4 16 V7 Z" fill="#1261A0" />
+                <path
+                  d="M16 5 L25 9 V16 C25 21.5 21 25.5 16 27.2 C11 25.5 7 21.5 7 16 V9 Z"
+                  fill="#071A2E"
+                />
+                <path d="M16 10 L21 22 L16 19 L11 22 Z" fill="#F2B632" />
+              </svg>
+            </div>
+            <h1 class="game-title">INTEGRITY DASH</h1>
+            <p class="game-tagline">Run Fast. Choose Right.</p>
+            <div class="menu-actions">
+              <button id="btn-start" class="btn btn-primary" type="button">Start Game</button>
+              <button id="btn-how-to-play" class="btn btn-secondary" type="button">
+                How to Play
+              </button>
+            </div>
+            <p class="version-label">v0.5.1-alpha-demo</p>
+          </div>
+        </section>
+
+        <section id="screen-how-to-play" class="screen hidden" data-screen="how-to-play">
+          <div class="panel how-to-play-panel">
+            <h2>How to Play</h2>
+            <div class="instructions-grid">
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#8596;</span>
+                <div>
+                  <strong>Change Lane</strong>
+                  <p>Desktop: A/D or Left/Right Arrow &middot; Mobile: swipe left/right</p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#8593;</span>
+                <div>
+                  <strong>Jump</strong>
+                  <p>Desktop: W, Up Arrow, or Space &middot; Mobile: swipe up</p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#8595;</span>
+                <div>
+                  <strong>Slide</strong>
+                  <p>Desktop: S or Down Arrow &middot; Mobile: swipe down</p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#10074;&#10074;</span>
+                <div>
+                  <strong>Pause / Resume</strong>
+                  <p>Desktop: Escape or P &middot; Mobile: tap the pause button</p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#9888;</span>
+                <div>
+                  <strong>Avoid Office Obstacles</strong>
+                  <p>Jump over floor obstacles &middot; Slide under security barriers</p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#9733;</span>
+                <div>
+                  <strong>Collect Integrity Tokens</strong>
+                  <p>
+                    Consecutive tokens build a streak; higher streaks raise your score
+                    multiplier up to x4. Tokens do not restore Integrity.
+                  </p>
+                </div>
+              </div>
+              <div class="instruction-row">
+                <span class="instruction-icon" aria-hidden="true">&#10003;</span>
+                <div>
+                  <strong>Near Miss</strong>
+                  <p>Clear an obstacle in your lane by a hair - jump or slide right past it
+                    for a bonus, no Integrity or multiplier risk.</p>
+                </div>
+              </div>
+            </div>
+            <p class="how-to-play-note">
+              Colliding with an obstacle costs Integrity and resets your streak and multiplier.
+              Reach 0% Integrity and your run ends - keep to the three lanes and choose your
+              moves carefully as you run through Corporate HQ.
+            </p>
+            <button id="btn-back-from-how-to-play" class="btn btn-secondary" type="button">
+              Back
+            </button>
+          </div>
+        </section>
+
+        <div id="hud" class="hud hidden" aria-live="off">
+          <div class="hud-top-left">
+            <div class="hud-stat">
+              <span class="hud-label">Score</span>
+              <span id="hud-score" class="hud-value">0</span>
+            </div>
+            <div class="hud-stat">
+              <span class="hud-label">Distance</span>
+              <span id="hud-distance" class="hud-value">0 m</span>
+            </div>
+          </div>
+          <div class="hud-top-right">
+            <button id="btn-pause" class="btn-icon" type="button" aria-label="Pause game">
+              &#10074;&#10074;
+            </button>
+            <div class="hud-reward-stats">
+              <div class="hud-stat hud-stat-compact">
+                <span class="hud-label">Tokens</span>
+                <span id="hud-tokens" class="hud-value">0</span>
+              </div>
+              <div id="hud-multiplier-stat" class="hud-stat hud-stat-compact">
+                <span class="hud-label">Multiplier</span>
+                <span id="hud-multiplier" class="hud-value">x1</span>
+              </div>
+              <div class="hud-stat hud-stat-compact">
+                <span class="hud-label">Streak</span>
+                <span id="hud-streak" class="hud-value">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud-callouts" aria-live="polite">
+            <div id="multiplier-callout" class="hud-callout hud-callout-multiplier hidden"></div>
+            <div id="streak-lost-callout" class="hud-callout hud-callout-streak-lost hidden">
+              Streak Lost
+            </div>
+          </div>
+
+          <div id="floating-reward-container" class="floating-reward-container" aria-hidden="true"></div>
+
+          <div class="hud-bottom">
+            <div
+              class="integrity-meter"
+              role="meter"
+              aria-label="Integrity Meter"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="100"
+            >
+              <span class="integrity-meter-label">INTEGRITY</span>
+              <div class="integrity-meter-track">
+                <div id="integrity-meter-fill" class="integrity-meter-fill" style="width: 100%"></div>
+              </div>
+              <span id="integrity-meter-value" class="integrity-meter-value">100%</span>
+            </div>
+          </div>
+        </div>
+
+        <section id="screen-pause" class="screen hidden" data-screen="pause">
+          <div class="panel pause-panel">
+            <h2>Paused</h2>
+            <div class="menu-actions">
+              <button id="btn-resume" class="btn btn-primary" type="button">Resume</button>
+              <button id="btn-restart-from-pause" class="btn btn-secondary" type="button">
+                Restart
+              </button>
+              <button id="btn-menu-from-pause" class="btn btn-secondary" type="button">
+                Main Menu
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="screen-game-over" class="screen hidden" data-screen="game-over">
+          <div class="panel game-over-panel">
+            <h2>Run Complete</h2>
+            <div id="game-over-rating" class="game-over-rating">
+              <div id="rating-stars" class="rating-stars" role="img" aria-label="0 out of 5 stars">☆☆☆☆☆</div>
+              <div id="rating-title" class="rating-title">Needs More Training</div>
+              <p id="rating-feedback" class="rating-feedback">Every run builds experience.</p>
+            </div>
+            <div class="game-over-stats">
+              <div class="stat-row">
+                <span>Final Score</span>
+                <span id="final-score">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Distance</span>
+                <span id="final-distance">0 m</span>
+              </div>
+              <div class="stat-row">
+                <span>Run Time</span>
+                <span id="final-run-time">0:00</span>
+              </div>
+              <div class="stat-row">
+                <span>Best Score</span>
+                <span id="final-best-score">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Integrity Remaining</span>
+                <span id="final-integrity">0%</span>
+              </div>
+              <div class="stat-row">
+                <span>Tokens Collected</span>
+                <span id="final-tokens">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Near Misses</span>
+                <span id="final-near-misses">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Obstacle Hits</span>
+                <span id="final-obstacle-hits">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Best Streak</span>
+                <span id="final-best-streak">0</span>
+              </div>
+              <div class="stat-row">
+                <span>Best Multiplier</span>
+                <span id="final-max-multiplier">x1</span>
+              </div>
+            </div>
+            <div class="menu-actions">
+              <button id="btn-restart-from-game-over" class="btn btn-primary" type="button">
+                Restart
+              </button>
+              <button id="btn-menu-from-game-over" class="btn btn-secondary" type="button">
+                Main Menu
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div id="screen-flash" class="screen-flash" aria-hidden="true"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

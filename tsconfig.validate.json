@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "isolatedModules": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "declaration": false,
+    "outDir": ".validate-build"
+  },
+  "include": [
+    "src/systems/AdaptiveDifficultyDirector.ts",
+    "src/systems/RunAnalytics.ts",
+    "src/systems/EndRunRating.ts",
+    "src/config/adaptiveDifficultyConfig.ts",
+    "src/config/runRatingConfig.ts",
+    "src/utils/math.ts"
+  ]
+}
